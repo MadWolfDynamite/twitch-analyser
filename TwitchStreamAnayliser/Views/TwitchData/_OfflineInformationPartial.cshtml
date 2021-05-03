@@ -1,0 +1,21 @@
+﻿@model TwitchStreamAnalyser.Models.TwitchStatsModel
+@{
+    var viewsLabel = Model.ChannelViews == 1 ? "View" : "Views";
+    var followLabel = Model.ChannelFollowers == 1 ? "Follower" : "Followers";
+}
+
+<table>
+    <tr>
+    <td><i class="fas fa-user fa-fw"></i></td>
+        <td>OFFLINE</td>
+    </tr>
+
+    <tr>
+        <td><i class="far fa-eye fa-fw"></i></td>
+        <td>@Html.DisplayFor(m => m.ChannelViews) @viewsLabel</td>
+    </tr>
+    <tr>
+        <td><i class="fas fa-users fa-fw"></i></td>
+        <td>@Html.DisplayFor(m => m.ChannelFollowers) @followLabel</td>
+    </tr>
+</table>

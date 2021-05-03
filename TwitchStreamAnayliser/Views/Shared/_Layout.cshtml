@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        @if (ViewData["Title"].Equals("Index")) { <title>Wolf Eye Twitch Analyser</title> }
+        else { <title>@ViewData["Title"] | Wolf's Eye Twitch Analyser</title> }
+
+        <script src="https://kit.fontawesome.com/adac8629cc.js" crossorigin="anonymous"></script>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="~/css/site.css" />
+    </head>
+    <body>
+        <div class="container">
+            @RenderBody()
+        </div>
+
+        <footer>
+            <div class="container">
+                &copy; @DateTime.Now.Year - MadWolfDynamite
+            </div>
+        </footer>
+        @RenderSection("Scripts", required: false)
+    </body>
+</html>

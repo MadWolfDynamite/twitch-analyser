@@ -1,0 +1,50 @@
+﻿body {
+    background: #0e0e10;
+    color: #efeff1;
+}
+
+.stream-icon {
+    color: #abacb6;
+}
+
+.container {
+    max-width: 100%;
+
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.twitch-user {
+    width: 100%;
+
+    padding-top: 5px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid #353538;
+}
+.twitch-user img {
+    max-height: 30px;
+}
+.twitch-user td {
+    font-weight: 600;
+}
+
+.user-settings {
+    padding-right: 20px;
+}
+
+td {
+    padding-left: 5px;
+}
+td:nth-child(1) {
+    padding-left: 20px;
+}
+
+footer {
+    margin-top: 15px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+
+    border-top: 1px solid #353538;
+}

@@ -1,0 +1,48 @@
+﻿@model TwitchStreamAnalyser.Models.TwitchStatsModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setInterval(refreshStreamStats, 5000);
+        });
+
+        function refreshStreamStats() {
+            var request = $.ajax({
+                method: 'GET',
+                url: '@Url.Action("RefreshStreamData", "TwitchData")'
+            });
+
+            request.done(function (data) {
+                $("#stream-data").html(data);
+            });
+        }
+    </script>
+}
+
+<div class="twitch-user float-left">
+    <table>
+        <tr>
+            <td><img src="@ViewData["UserAvatar"]" alt="@ViewData["DisplayName"]" /></td>
+            <td>@ViewData["DisplayName"]</td>
+        </tr>
+    </table>
+</div>
+
+<div class="user-settings float-right">
+    <a asp-action="Index" asp-controller="Config"><i class="fas fa-cog"></i></a>
+</div>
+
+<div id="stream-data">
+    @if ((bool)ViewData["IsLive"])
+    {
+        <partial name="_LiveInformationPartial" model="Model" />
+    }
+    else
+    {
+        <partial name="_OfflineInformationPartial" model="Model" />
+    }
+</div>

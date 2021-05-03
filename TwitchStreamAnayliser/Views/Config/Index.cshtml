@@ -1,0 +1,77 @@
+﻿@model TwitchStreamAnalyser.Models.UserConfigurationModel
+
+@{
+    ViewData["Title"] = "User Settings";
+}
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var originalLogin = '@Model.Login',
+            originalFile = '@Model.NowPlayingFile';
+
+        $("input[type='text']").on("change", function () {
+            $("#save-button").prop("disabled", function () {
+                var isLoginSame = $("#Login").val() == originalLogin;
+                var isNowPlayingSame = $("#NowPlayingFile").val() == originalFile;
+
+                return isLoginSame && isNowPlayingSame;
+            });
+        })
+
+        $("#reset-button").click(function () {
+            $("#Login").val('@Model.Login');
+            $("#NowPlayingFile").val('@Model.NowPlayingFile');
+
+            $("#save-button").prop("disabled", true);
+        });
+
+        $("#save-button").click(function () {
+            var request = $.ajax({
+                method: 'GET',
+                url: '@Url.Action("UpdateConfigFile", "Config")',
+
+                data: { login: $("#Login").val(), file: $("#NowPlayingFile").val() }
+            });
+
+            request.done(function (response) {
+                if (response.success) {
+                    originalLogin = $("#Login").val();
+                    originalFile = $("#NowPlayingFile").val();
+
+                    $("#save-button").prop("disabled", true);
+
+                    alert(response.message)
+                }
+            });
+        });
+    </script>
+}
+
+<div class="twitch-user float-left"><h2>Settings</h2></div>
+
+<div class="user-settings float-right">
+    <a asp-action="Index" asp-controller="TwitchData"><i class="fas fa-times"></i></a>
+</div>
+
+<table>
+    <tr>
+        <th>@Html.LabelFor(m => m.Login, "Channel")</th>
+        <td colspan="2">@Html.TextBoxFor(m => m.Login, new { placeholder = "leave blank for own channel" })</td>
+    </tr>
+
+    <tr>
+        <th>@Html.LabelFor(m => m.NowPlayingFile, "Now Playing")</th>
+        <td>@Html.TextBoxFor(m => m.NowPlayingFile, new { placeholder = @"example: C:\SampleFolder\NowPlaying.txt" })</td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <input type="button" id="reset-button" value="Reset" />
+            <input type="button" id="default-button" value="Restore to Defaults" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><input type="button" id="save-button" value="Save" disabled /></td>
+    </tr>
+</table>

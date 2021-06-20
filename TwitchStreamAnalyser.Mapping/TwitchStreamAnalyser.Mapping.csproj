@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -6,12 +6,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TwitchStreamAnalyser.Api\TwitchStreamAnalyser.Api.csproj" />
     <ProjectReference Include="..\TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj" />
-    <ProjectReference Include="..\TwitchStreamAnalyser.Persistence\TwitchStreamAnalyser.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

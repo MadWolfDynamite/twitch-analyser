@@ -21,5 +21,10 @@ namespace TwitchStreamAnalyser.Api.Services
         {
             return await _twitchAccountrepository.ListAsync();
         }
+
+        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user)
+        {
+            return await _twitchAccountrepository.GetTwitchAccount(user);
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace TwitchStreamAnalyser.Domain.Repositories
     public interface ITwitchAccountRepository
     {
         Task<IEnumerable<TwitchAccount>> ListAsync();
+
+        Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user);
     }
 }

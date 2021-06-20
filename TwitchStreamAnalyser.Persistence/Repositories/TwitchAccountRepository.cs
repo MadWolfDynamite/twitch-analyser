@@ -13,5 +13,10 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
         {
             return await _apiClient.GetTwitchAccountsAsync();
         }
+
+        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user)
+        {
+            return await _apiClient.GetTwitchAccountsAsync(user);
+        }
     }
 }

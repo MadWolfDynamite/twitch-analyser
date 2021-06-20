@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Client", "TwitchStreamAnayliser\TwitchStreamAnalyser.Client.csproj", "{785AB143-1C3C-4B43-AA4F-F5811912176F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamAnalyser.Api", "TwitchStreamAnalyser.Api\TwitchStreamAnalyser.Api.csproj", "{A306EC8E-C0E0-439F-A6D7-623EC6418C9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Api", "TwitchStreamAnalyser.Api\TwitchStreamAnalyser.Api.csproj", "{A306EC8E-C0E0-439F-A6D7-623EC6418C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamAnalyser.Domain", "TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj", "{09493AFB-77E0-426F-86E0-7F3A24485724}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Domain", "TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj", "{09493AFB-77E0-426F-86E0-7F3A24485724}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamAnalyser.TwitchApi", "TwitchStreamAnalyser.TwitchApi\TwitchStreamAnalyser.TwitchApi.csproj", "{0B961A28-72BD-4AF1-8DE7-FEDB5C43F91A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.TwitchApi", "TwitchStreamAnalyser.TwitchApi\TwitchStreamAnalyser.TwitchApi.csproj", "{0B961A28-72BD-4AF1-8DE7-FEDB5C43F91A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamAnalyser.Persistence", "TwitchStreamAnalyser.Persistence\TwitchStreamAnalyser.Persistence.csproj", "{4B79E88E-075F-4A09-B4AE-04C532C3E78E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Persistence", "TwitchStreamAnalyser.Persistence\TwitchStreamAnalyser.Persistence.csproj", "{4B79E88E-075F-4A09-B4AE-04C532C3E78E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

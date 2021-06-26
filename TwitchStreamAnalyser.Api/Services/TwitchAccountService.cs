@@ -26,5 +26,25 @@ namespace TwitchStreamAnalyser.Api.Services
         {
             return await _twitchAccountrepository.GetTwitchAccount(user);
         }
+
+        public async Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user)
+        {
+            return await _twitchAccountrepository.GetTwitchChannel(user);
+        }
+
+        public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id)
+        {
+            return await _twitchAccountrepository.GetTwitchStream(id);
+        }
+
+        public async Task<int> GetTwitchClips(string id, string date)
+        {
+            return await _twitchAccountrepository.GetTwitchClips(id, date);
+        }
+
+        public async Task<int> GetTwitchFollowers(string id)
+        {
+            return await _twitchAccountrepository.GetTwitchFollowers(id);
+        }
     }
 }

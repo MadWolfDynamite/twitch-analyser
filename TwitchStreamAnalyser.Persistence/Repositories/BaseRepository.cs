@@ -12,7 +12,7 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
         public BaseRepository()
         {
             _apiClient = TwitchApiClient.GetClient();
-            _apiClient.SetAuthentication("b6uwpcekra6xgg5yxw1kw473en4cly", "mq6pl2rz8r64rlda7k0bok1dw2ojgu");
+            _apiClient.SetAuthentication("b6uwpcekra6xgg5yxw1kw473en4cly", "9orkv9m09ui3v79ce87nfzoapcbq63");
         }
     }
 }

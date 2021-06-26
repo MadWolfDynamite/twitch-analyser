@@ -10,6 +10,8 @@ namespace TwitchStreamAnalyser.Api.Mapping
         public ModelToResourceProfile()
         {
             CreateMap<TwitchAccount, TwitchAccountResource>();
+            CreateMap<TwitchChannel, TwitchChannelResource>();
+            CreateMap<TwitchStream, TwitchStreamResource>();
         }
     }
 }

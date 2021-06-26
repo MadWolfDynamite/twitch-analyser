@@ -11,5 +11,13 @@ namespace TwitchStreamAnalyser.Domain.Services
         Task<IEnumerable<TwitchAccount>> ListAsync();
 
         Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user);
+
+        Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user);
+
+        Task<IEnumerable<TwitchStream>> GetTwitchStream(string id);
+
+        Task<int> GetTwitchClips(string id, string date);
+
+        Task<int> GetTwitchFollowers(string id);
     }
 }

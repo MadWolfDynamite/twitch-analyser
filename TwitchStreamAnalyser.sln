@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Twitch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Persistence", "TwitchStreamAnalyser.Persistence\TwitchStreamAnalyser.Persistence.csproj", "{4B79E88E-075F-4A09-B4AE-04C532C3E78E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools.StreamSerializer", "Tools.StreamSerializer\Tools.StreamSerializer.csproj", "{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4B79E88E-075F-4A09-B4AE-04C532C3E78E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B79E88E-075F-4A09-B4AE-04C532C3E78E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B79E88E-075F-4A09-B4AE-04C532C3E78E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

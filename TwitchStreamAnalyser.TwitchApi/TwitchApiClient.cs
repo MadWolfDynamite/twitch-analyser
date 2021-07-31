@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Tools.StreamSerializer;
 using TwitchStreamAnalyser.Domain.Models;
 using TwitchStreamAnalyser.TwitchApi.Models;
 
@@ -15,7 +16,6 @@ namespace TwitchStreamAnalyser.TwitchApi
     public sealed class TwitchApiClient
     {
         private static readonly TwitchApiClient _instance;
-
         private static readonly HttpClient _client = new HttpClient();
 
         static TwitchApiClient() 
@@ -28,32 +28,6 @@ namespace TwitchStreamAnalyser.TwitchApi
         public static TwitchApiClient GetClient()
         {
             return _instance;
-        }
-
-        private static T DeserialiseJsonFromStream<T>(Stream stream)
-        {
-            if (stream == null || stream.CanRead == false)
-                return default;
-
-            using var reader = new StreamReader(stream);
-            using var json = new JsonTextReader(reader);
-
-            var serialiser = new JsonSerializer();
-            var result = serialiser.Deserialize<T>(json);
-
-            return result;
-        }
-        private static async Task<string> StreamToStringAsync(Stream stream)
-        {
-            string content = null;
-
-            if (stream != null)
-            {
-                using var reader = new StreamReader(stream);
-                content = await reader.ReadToEndAsync();
-            }
-
-            return content;
         }
 
         public void SetAuthentication(string clientId, string token)
@@ -76,11 +50,11 @@ namespace TwitchStreamAnalyser.TwitchApi
 
             if (response.IsSuccessStatusCode)
             {
-                var accountData = DeserialiseJsonFromStream<TwitchResponse<TwitchAccount>>(stream);
+                var accountData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchAccount>>(stream);
                 return accountData.Data;
             }
 
-            var content = await StreamToStringAsync(stream);
+            var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
         }
 
@@ -93,11 +67,11 @@ namespace TwitchStreamAnalyser.TwitchApi
 
             if (response.IsSuccessStatusCode)
             {
-                var channelData = DeserialiseJsonFromStream<TwitchResponse<TwitchChannel>>(stream);
+                var channelData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchChannel>>(stream);
                 return channelData.Data;
             }
 
-            var content = await StreamToStringAsync(stream);
+            var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
         }
 
@@ -110,11 +84,11 @@ namespace TwitchStreamAnalyser.TwitchApi
 
             if (response.IsSuccessStatusCode)
             {
-                var streamData = DeserialiseJsonFromStream<TwitchResponse<TwitchStream>>(stream);
+                var streamData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchStream>>(stream);
                 return streamData.Data;
             }
 
-            var content = await StreamToStringAsync(stream);
+            var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
         }
 
@@ -127,11 +101,11 @@ namespace TwitchStreamAnalyser.TwitchApi
 
             if (response.IsSuccessStatusCode)
             {
-                var streamData = DeserialiseJsonFromStream<TwitchFollowerResponse<TwitchFollower>>(stream);
+                var streamData = StreamSerializer.DeserialiseJsonFromStream<TwitchFollowerResponse<TwitchFollower>>(stream);
                 return streamData.Total;
             }
 
-            var content = await StreamToStringAsync(stream);
+            var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
         }
 
@@ -145,11 +119,11 @@ namespace TwitchStreamAnalyser.TwitchApi
 
             if (!response.IsSuccessStatusCode)
             {
-                var content = await StreamToStringAsync(stream);
+                var content = await StreamSerializer.StreamToStringAsync(stream);
                 throw new Exception(content);
             }
 
-            var clipData = DeserialiseJsonFromStream<TwitchResponse<TwitchClip>>(stream);
+            var clipData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchClip>>(stream);
             do
             {
                 result += clipData.Data.Count();
@@ -159,7 +133,7 @@ namespace TwitchStreamAnalyser.TwitchApi
                 stream = await response.Content.ReadAsStreamAsync();
 
                 if (response.IsSuccessStatusCode)
-                    clipData = DeserialiseJsonFromStream<TwitchResponse<TwitchClip>>(stream);
+                    clipData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchClip>>(stream);
 
             } while (response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(clipData.Pagination.Cursor));
 

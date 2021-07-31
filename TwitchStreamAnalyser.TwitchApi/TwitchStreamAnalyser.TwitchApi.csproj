@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Tools.StreamSerializer\Tools.StreamSerializer.csproj" />
     <ProjectReference Include="..\TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj" />
   </ItemGroup>
 

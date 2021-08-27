@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.StreamSerializer;
+using TwitchStreamAnalyser.Domain.Models;
+using TwitchStreamAnalyser.TwitchApi.Models;
 
 namespace TwitchStreamAnalyser.TwitchApi
 {
@@ -18,7 +21,7 @@ namespace TwitchStreamAnalyser.TwitchApi
         }
         private TwitchTokenClient() { }
 
-        public static TwitchTokenClient GetInstance()
+        public static TwitchTokenClient GetClient()
         {
             return _instance;
         }
@@ -41,6 +44,29 @@ namespace TwitchStreamAnalyser.TwitchApi
             //authUrl += "&scope=user:read:email";
 
             return authUrl;
+        }
+
+        public async Task<TwitchToken> GetAccessTokenAsync(string clientId, string clientSecret, string code, string redirectUrl)
+        {
+            string apiPath = "oauth2/token";
+
+            apiPath += $"?client_id={clientId}";
+            apiPath += $"&client_secret={clientSecret}";
+            apiPath += $"&code={code}";
+            apiPath += "&grant_type=authorization_code";
+            apiPath += $"&redirect_uri={redirectUrl}";
+
+            var response = await _client.GetAsync(apiPath);
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenData = StreamSerializer.DeserialiseJsonFromStream<TwitchToken>(stream);
+                return tokenData;
+            }
+
+            var content = await StreamSerializer.StreamToStringAsync(stream);
+            throw new Exception(content);
         }
     }
 }

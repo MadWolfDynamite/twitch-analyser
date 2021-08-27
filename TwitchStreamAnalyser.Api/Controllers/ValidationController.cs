@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TwitchStreamAnalyser.Domain.Services;
 
 namespace TwitchStreamAnalyser.Api.Controllers
 {
@@ -11,10 +12,23 @@ namespace TwitchStreamAnalyser.Api.Controllers
     [ApiController]
     public class ValidationController : ControllerBase
     {
-        [Route("AuthUrl")]
-        public string GetAuthUrl(string url)
+        private readonly ITwitchTokenService _twitchTokenService;
+
+        public ValidationController(ITwitchTokenService twitchTokenService)
         {
-            return url;
+            _twitchTokenService = twitchTokenService;
+        }
+
+        [Route("AuthUrl")]
+        public string GetAuthUrl(string client, string url)
+        {
+            return _twitchTokenService.GetAuthenticationUrl(client, url);
+        }
+
+        [Route("Token")]
+        public string GetToken()
+        {
+            return "";
         }
     }
 }

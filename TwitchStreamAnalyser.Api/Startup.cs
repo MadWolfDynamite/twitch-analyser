@@ -26,6 +26,9 @@ namespace TwitchStreamAnalyser.Api
             services.AddScoped<ITwitchAccountRepository, TwitchAccountRepository>();
             services.AddScoped<ITwitchAccountService, TwitchAccountService>();
 
+            services.AddScoped<ITwitchTokenRepository, TwitchTokenRepository>();
+            services.AddScoped<ITwitchTokenService, TwitchTokenService>();
+
             services.AddAutoMapper(typeof(ModelToResourceProfile));
         }
 

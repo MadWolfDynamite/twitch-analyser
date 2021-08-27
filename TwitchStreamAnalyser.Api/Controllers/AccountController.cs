@@ -22,7 +22,6 @@ namespace TwitchStreamAnalyser.Api.Controllers
         public AccountController(ITwitchAccountService twitchAccountService, IMapper mapper)
         {
             _twitchAccountService = twitchAccountService;
-
             _mapper = mapper;
         }
 

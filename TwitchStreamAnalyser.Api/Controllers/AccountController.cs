@@ -16,7 +16,6 @@ namespace TwitchStreamAnalyser.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ITwitchAccountService _twitchAccountService;
-
         private readonly IMapper _mapper;
 
         public AccountController(ITwitchAccountService twitchAccountService, IMapper mapper)

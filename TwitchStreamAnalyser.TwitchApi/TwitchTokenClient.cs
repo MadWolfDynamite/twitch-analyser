@@ -56,7 +56,7 @@ namespace TwitchStreamAnalyser.TwitchApi
             apiPath += "&grant_type=authorization_code";
             apiPath += $"&redirect_uri={redirectUrl}";
 
-            var response = await _client.GetAsync(apiPath);
+            var response = await _client.PostAsync(apiPath, null);
             var stream = await response.Content.ReadAsStreamAsync();
 
             if (response.IsSuccessStatusCode)

@@ -16,5 +16,7 @@ namespace TwitchStreamAnalyser.Domain.Services
 
         Task<TwitchToken> GetTwitchToken(string clientId, string clientSecret, string code, string redirectUrl);
         Task<HttpResponseMessage> ValidateTwitchToken(string token);
+
+        Task<TwitchToken> RefreshTwitchToken(string clientId, string clientSecret, string token);
     }
 }

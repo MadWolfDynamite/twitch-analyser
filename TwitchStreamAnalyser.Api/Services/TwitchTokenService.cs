@@ -38,5 +38,10 @@ namespace TwitchStreamAnalyser.Api.Services
         {
             return await _twitchTokenRepository.ValidateTwitchToken(token);
         }
+
+        public async Task<TwitchToken> RefreshTwitchToken(string clientId, string clientSecret, string token)
+        {
+            return await _twitchTokenRepository.RefreshTwitchToken(clientId, clientSecret, token);
+        }
     }
 }

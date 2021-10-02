@@ -68,5 +68,27 @@ namespace TwitchStreamAnalyser.TwitchApi
             var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
         }
+
+        public async Task<TwitchToken> RefreshTwitchTokenAsync(string clientId, string clientSecret, string token)
+        {
+            string apiPath = "oauth2/token";
+
+            apiPath += $"?client_id={clientId}";
+            apiPath += $"&client_secret={clientSecret}";
+            apiPath += $"&refresh_token={token}";
+            apiPath += "&grant_type=refresh_token";
+
+            var response = await _client.PostAsync(apiPath, null);
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenData = StreamSerializer.DeserialiseJsonFromStream<TwitchToken>(stream);
+                return tokenData;
+            }
+
+            var content = await StreamSerializer.StreamToStringAsync(stream);
+            throw new Exception(content);
+        }
     }
 }

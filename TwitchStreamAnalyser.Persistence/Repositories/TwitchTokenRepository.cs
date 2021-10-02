@@ -33,5 +33,13 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
         {
             return await _tokenClient.ValidateTokenAsync(token);
         }
+
+        public async Task<TwitchToken> RefreshTwitchToken(string clientId, string clientSecret, string token)
+        {
+            var tokenData = await _tokenClient.RefreshTwitchTokenAsync(clientId, clientSecret, token);
+            _apiClient.SetAuthentication(clientId, tokenData.Access_Token);
+
+            return tokenData;
+        }
     }
 }

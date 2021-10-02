@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TwitchStreamAnalyser.Api.Resources;
 using TwitchStreamAnalyser.Domain.Models;
@@ -23,6 +24,19 @@ namespace TwitchStreamAnalyser.Api.Controllers
         {
             _twitchTokenService = twitchTokenService;
             _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetAsync()
+        {
+            var savedToken = _twitchTokenService.GetActiveClientId();
+            return await _twitchTokenService.ValidateTwitchToken(savedToken);
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<HttpResponseMessage> GetAsync(string Id)
+        {
+            return await _twitchTokenService.ValidateTwitchToken(Id);
         }
 
         [Route("AuthUrl")]

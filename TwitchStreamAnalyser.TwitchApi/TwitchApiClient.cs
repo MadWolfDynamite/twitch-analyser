@@ -30,6 +30,15 @@ namespace TwitchStreamAnalyser.TwitchApi
             return _instance;
         }
 
+        public string GetAuthentication()
+        {
+            if (_client.DefaultRequestHeaders.Authorization == null)
+                return "";
+
+            var tokenData = _client.DefaultRequestHeaders.Authorization;
+            return tokenData.ToString().Replace("Bearer ", "");
+        }
+
         public void SetAuthentication(string clientId, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

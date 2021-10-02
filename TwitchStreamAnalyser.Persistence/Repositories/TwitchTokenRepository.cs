@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchStreamAnalyser.Domain.Models;
@@ -14,9 +16,22 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
             return _tokenClient.GetAuthenticationUrl(client, url);
         }
 
+        public string GetActiveClientId()
+        {
+            return _apiClient.GetAuthentication();
+        }
+
         public async Task<TwitchToken> GetTwitchToken(string clientId, string clientSecret, string code, string redirectUrl)
         {
-            return await _tokenClient.GetAccessTokenAsync(clientId, clientSecret, code, redirectUrl);
+            var tokenData = await _tokenClient.GetAccessTokenAsync(clientId, clientSecret, code, redirectUrl);
+            _apiClient.SetAuthentication(clientId, tokenData.Access_Token);
+
+            return tokenData;
+        }
+
+        public async Task<HttpResponseMessage> ValidateTwitchToken(string token)
+        {
+            return await _tokenClient.ValidateTokenAsync(token);
         }
     }
 }

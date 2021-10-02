@@ -26,12 +26,12 @@ namespace TwitchStreamAnalyser.TwitchApi
             return _instance;
         }
 
-        public async Task<bool> ValidateTokenAsync(string token)
+        public async Task<HttpResponseMessage> ValidateTokenAsync(string token)
         {
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("OAuth", token);
             HttpResponseMessage response = await _client.GetAsync("oauth2/validate");
 
-            return response.IsSuccessStatusCode;
+            return response;
         }
 
         public string GetAuthenticationUrl(string clientId, string redirectUrl)

@@ -12,32 +12,31 @@ using TwitchStreamAnalyser.TwitchIntegration;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using TwitchStreamAnalyser.FileProcessing;
+using TwitchStreamAnalyser.Client.Services;
 
 namespace TwitchStreamAnalyser.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+
         private readonly TwitchAppClient _clientSettings;
+        private readonly ApiClientService _client;
 
         private static readonly string appDataFolder = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\WolfEyeAnalyser";
 
         public HomeController(ILogger<HomeController> logger, IOptions<TwitchAppClient> clientSettings)
         {
             _logger = logger;
+
             _clientSettings = clientSettings.Value;
+
+            _client = ApiClientService.GetClient();
+            _client.SetApiEndpoint(_clientSettings.ApiEndpoint);
         }
 
         public async Task<IActionResult> Index()
         {
-            if (string.IsNullOrWhiteSpace(TwitchApiClient.ClientId))
-            {
-                TwitchApiClient.ClientId = _clientSettings.Id;
-
-                TwitchValidationClient.ClientId = _clientSettings.Id;
-                TwitchValidationClient.ClientSecret = _clientSettings.Secret;
-            }
-
             if (!Directory.Exists(appDataFolder))
                 Directory.CreateDirectory(appDataFolder);
 
@@ -47,16 +46,11 @@ namespace TwitchStreamAnalyser.Controllers
             if (System.IO.File.Exists($@"{appDataFolder}\SavedToken.json"))
             {
                 var tokenDetails = await JsonFileProcessor.LoadAccessTokenFile();
+                var validationResponse = await _client.ValidateAuthToken(tokenDetails.Token);
 
                 var timeSinceValidation = DateTime.UtcNow.Subtract(tokenDetails.DateTimestamp);
-                if (timeSinceValidation.TotalMinutes >= 30)
+                if (timeSinceValidation.TotalMinutes >= 30 && !validationResponse)
                 {
-                    if (await TwitchValidationClient.ValidateTokenAsync(tokenDetails.Token))
-                    {
-                        TwitchApiClient.SetAccessToken(tokenDetails.Token);
-                        return RedirectToAction("Index", "TwitchData");
-                    }
-
                     if (!String.IsNullOrWhiteSpace(tokenDetails.RefreshToken))
                     {
                         var apiResponse = await TwitchValidationClient.RefreshAccessToken(tokenDetails.RefreshToken);
@@ -74,17 +68,17 @@ namespace TwitchStreamAnalyser.Controllers
                         }
                     }
                 }
-                else
+
+                if (validationResponse)
                 {
-                    if (await TwitchValidationClient.ValidateTokenAsync(tokenDetails.Token))
-                    {
-                        TwitchApiClient.SetAccessToken(tokenDetails.Token);
-                        return RedirectToAction("Index", "TwitchData");
-                    }
+                    TwitchApiClient.SetAccessToken(tokenDetails.Token);
+                    return RedirectToAction("Index", "TwitchData");
                 }
             }
 
-            ViewData["AuthenticationUrl"] = TwitchValidationClient.GetAuthenticationUrl(Url.Action("Authentication", "TwitchData", null, Request.Scheme));
+            var redirectUrl = Url.Action("Authentication", "TwitchData", null, Request.Scheme);
+            ViewData["AuthenticationUrl"] = await _client.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
+
             return View();
         }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TwitchStreamAnalyser.Models
 {
-    public class TwitchStatsModel
+    public class StreamDetail
     {
         public int Viewers { get; set; }
         public string StreamStartDateTime { get; set; }
@@ -13,6 +13,8 @@ namespace TwitchStreamAnalyser.Models
 
         public int ChannelViews { get; set; }
         public int ChannelFollowers { get; set; }
+
+        public bool IsLive { get; set; }
 
         public string NowPlaying { get; set; }
     }

@@ -34,7 +34,7 @@ namespace TwitchStreamAnalyser.Api.Services
             return await _twitchTokenRepository.GetTwitchToken(clientId, clientSecret, code, redirectUrl);
         }
 
-        public async Task<HttpResponseMessage> ValidateTwitchToken(string token)
+        public async Task<bool> ValidateTwitchToken(string token)
         {
             return await _twitchTokenRepository.ValidateTwitchToken(token);
         }

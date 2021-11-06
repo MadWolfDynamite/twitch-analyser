@@ -29,7 +29,7 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
             return tokenData;
         }
 
-        public async Task<HttpResponseMessage> ValidateTwitchToken(string token)
+        public async Task<bool> ValidateTwitchToken(string token)
         {
             return await _tokenClient.ValidateTokenAsync(token);
         }

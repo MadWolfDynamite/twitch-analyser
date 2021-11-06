@@ -27,14 +27,14 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAsync()
+        public async Task<bool> GetAsync()
         {
             var savedToken = _twitchTokenService.GetActiveClientId();
             return await _twitchTokenService.ValidateTwitchToken(savedToken);
         }
 
         [HttpGet("{Id}")]
-        public async Task<HttpResponseMessage> GetAsync(string Id)
+        public async Task<bool> GetAsync(string Id)
         {
             return await _twitchTokenService.ValidateTwitchToken(Id);
         }
@@ -55,24 +55,24 @@ namespace TwitchStreamAnalyser.Api.Controllers
             return Ok(_twitchTokenService.GetAuthenticationUrl(client, url));
         }
 
-        [Route("OAuth")]
-        public async Task<TwitchTokenResource> GetToken(string code, string url)
+        [Route("OAuth"),HttpPost]
+        public async Task<TwitchTokenResource> GetToken([FromBody]SaveTokenResource resource)
         {
-            var cleanedUrl = string.IsNullOrWhiteSpace(url) ? Request.GetEncodedUrl().Replace(Request.QueryString.Value, "") : url;
+            var cleanedUrl = string.IsNullOrWhiteSpace(resource.RedirectUrl) ? Request.GetEncodedUrl().Replace(Request.QueryString.Value, "") : resource.RedirectUrl;
 
-            var tokenData = await _twitchTokenService.GetTwitchToken("b6uwpcekra6xgg5yxw1kw473en4cly", "2lbxxa0rnzjqrl93kr3f8mycr1qr7d", code, cleanedUrl);
-            var resource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
+            var tokenData = await _twitchTokenService.GetTwitchToken(resource.ClientId, resource.ClientSecret, resource.Token, cleanedUrl);
+            var tokenResource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
 
-            return resource;
+            return tokenResource;
         }
 
-        [Route("Refresh")]
-        public async Task<TwitchTokenResource> RefreshToekn(string token)
+        [Route("Refresh"),HttpPost]
+        public async Task<TwitchTokenResource> RefreshToekn([FromBody] SaveTokenResource resource)
         {
-            var tokenData = await _twitchTokenService.RefreshTwitchToken("b6uwpcekra6xgg5yxw1kw473en4cly", "2lbxxa0rnzjqrl93kr3f8mycr1qr7d", token);
-            var resource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
+            var tokenData = await _twitchTokenService.RefreshTwitchToken(resource.ClientId, resource.ClientSecret, resource.Token);
+            var tokenResource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
 
-            return resource;
+            return tokenResource;
         }
     }
 }

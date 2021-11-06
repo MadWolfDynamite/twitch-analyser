@@ -12,12 +12,23 @@ using TwitchStreamAnalyser.Models;
 using TwitchStreamAnalyser.TwitchIntegration;
 using TwitchStreamAnalyser.Controllers;
 using TwitchStreamAnalyser.FileProcessing;
+using TwitchStreamAnalyser.Client.Services;
+using Microsoft.Extensions.Options;
 
 namespace TwitchStreamAnalyser.Controllers
 {
     public class TwitchDataController : Controller
     {
-        private static readonly AccessTokenModel tokenDetails = new AccessTokenModel();
+        private readonly TwitchAppClient _clientSettings;
+        private readonly ApiClientService _client;
+
+        public TwitchDataController(IOptions<TwitchAppClient> clientSettings)
+        {
+            _clientSettings = clientSettings.Value;
+
+            _client = ApiClientService.GetClient();
+            _client.SetApiEndpoint(_clientSettings.ApiEndpoint);
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -41,7 +52,7 @@ namespace TwitchStreamAnalyser.Controllers
 
             ViewData["IsLive"] = selectedChannel.Is_Live;
 
-            var stats = new TwitchStatsModel()
+            var stats = new StreamDetail()
             {
                 ChannelViews = selectedUser.View_Count,
                 ChannelFollowers = 0
@@ -98,7 +109,7 @@ namespace TwitchStreamAnalyser.Controllers
 
                 if (channelApiResponse != null)
                 {
-                    var stats = new TwitchStatsModel()
+                    var stats = new StreamDetail()
                     {
                         ChannelViews = selectedUser.View_Count,
                         ChannelFollowers = 0
@@ -153,21 +164,26 @@ namespace TwitchStreamAnalyser.Controllers
         public async Task<IActionResult> Authentication(string code, string scope, string state)
         {
             var cleanedUrl = Request.GetEncodedUrl().Replace(Request.QueryString.Value, "");
-            var apiResponse = await TwitchValidationClient.GetAccessToken(code, cleanedUrl);
+            var response = await _client.GetTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, code, cleanedUrl);
 
-            if (apiResponse != null)
+            if (response != null)
             {
-                tokenDetails.Token = apiResponse.Access_Token;
-                tokenDetails.RefreshToken = apiResponse.Refresh_Token;
+                var tokenData = new AccessTokenModel 
+                { 
+                    Token = response.Access_Token,
+                    RefreshToken = response.Refresh_Token,
 
-                tokenDetails.DateTimestamp = DateTime.UtcNow;
+                    DateTimestamp = DateTime.UtcNow
+                };
 
-                JsonFileProcessor.SaveAccessTokenFile(tokenDetails);
+                JsonFileProcessor.SaveAccessTokenFile(tokenData);
 
                 return RedirectToAction("Index", "TwitchData");
             }
 
-            ViewData["AuthenticationUrl"] = TwitchValidationClient.GetAuthenticationUrl(Url.Action("Authentication", "TwitchData", null, Request.Scheme));
+            var redirectUrl = Url.Action("Authentication", "TwitchData", null, Request.Scheme);
+            ViewData["AuthenticationUrl"] = await _client.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
+
             return View();
         }
     }

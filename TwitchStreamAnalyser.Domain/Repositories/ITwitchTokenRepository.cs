@@ -18,5 +18,7 @@ namespace TwitchStreamAnalyser.Domain.Repositories
         Task<bool> ValidateTwitchToken(string token);
 
         Task<TwitchToken> RefreshTwitchToken(string clientId, string clientSecret, string token);
+
+        void SetTwitchToken(string clientId, string token);
     }
 }

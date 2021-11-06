@@ -1,12 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Tools.StreamSerializer;
+using TwitchStreamAnalyser.Api.Resources;
 using TwitchStreamAnalyser.Domain.Models;
+using TwitchStreamAnalyser.Models;
 
 namespace TwitchStreamAnalyser.Client.Services
 {
@@ -96,6 +99,156 @@ namespace TwitchStreamAnalyser.Client.Services
 
             var content = await StreamSerializer.StreamToStringAsync(stream);
             throw new Exception(content);
+        }
+
+        public async Task SetTwitchTokenAsync(string client, string token)
+        {
+            string apiPath = "token";
+
+            var data = new
+            {
+                ClientId = client,
+                Token = token
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+
+            var request = new StringContent(json);
+            request.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await _client.PutAsync(apiPath, request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+
+                var content = await StreamSerializer.StreamToStringAsync(stream);
+                throw new Exception(content);
+            }
+        }
+
+        public async Task<TwitchToken> RefreshTwitchTokenAsync(string client, string secret, string token)
+        {
+            string apiPath = "token/refresh";
+
+            var data = new
+            {
+                ClientId = client,
+                ClientSecret = secret,
+
+                Token = token
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+
+            var request = new StringContent(json);
+            request.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await _client.PostAsync(apiPath, request);
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenData = StreamSerializer.DeserialiseJsonFromStream<TwitchToken>(stream);
+                return tokenData;
+            }
+
+            var content = await StreamSerializer.StreamToStringAsync(stream);
+            throw new Exception(content);
+        }
+
+        public async Task<StreamDetail> GetStreamData(string user, string musicFile)
+        {
+            var resource = new StreamDetail();
+
+            string apiPath = $"account/{user}";
+
+            var response = await _client.GetAsync(apiPath);
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await StreamSerializer.StreamToStringAsync(stream);
+                throw new Exception(content);
+            }
+
+            var userData = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchAccountResource>>(stream).FirstOrDefault();
+
+            resource.Name = userData.Display_Name;
+            resource.AvatarUrl = userData.Profile_Image_Url;
+
+            resource.ChannelViews = userData.View_Count;
+
+            apiPath = $"channel/{userData.Login}";
+
+            response = await _client.GetAsync(apiPath);
+            stream = await response.Content.ReadAsStreamAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await StreamSerializer.StreamToStringAsync(stream);
+                throw new Exception(content);
+            }
+
+            var channelData = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchChannelResource>>(stream).FirstOrDefault(c => c.Id.Equals(userData.Id));
+
+            resource.IsLive = channelData.Is_Live;
+            resource.StreamStartDateTime = channelData.Started_At;
+
+            if (resource.IsLive)
+            {
+                apiPath = $"stream/{userData.Id}";
+
+                response = await _client.GetAsync(apiPath);
+                stream = await response.Content.ReadAsStreamAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var streamList = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchStreamResource>>(stream);
+                    resource.IsLive = streamList.Count() > 0;
+
+                    if (resource.IsLive)
+                    {
+                        var streamData = streamList.FirstOrDefault(s => s.User_Id.Equals(userData.Id));
+
+                        resource.Viewers = streamData.Viewer_Count;
+                        resource.StreamStartDateTime = streamData.Started_At;
+
+                        apiPath = $"clip/{userData.Id}";
+                        apiPath += $"?date={streamData.Started_At}";
+
+                        response = await _client.GetAsync(apiPath);
+                        stream = await response.Content.ReadAsStreamAsync();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var clipCount = StreamSerializer.DeserialiseJsonFromStream<int>(stream);
+                            resource.Clips = clipCount;
+                        }
+                        else { resource.Clips = 0; }
+                    }
+                }
+            }
+
+            apiPath = $"follower/{userData.Id}";
+
+            response = await _client.GetAsync(apiPath);
+            stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var followCount = StreamSerializer.DeserialiseJsonFromStream<int>(stream);
+                resource.ChannelFollowers = followCount;
+            }
+            else { resource.ChannelFollowers = 0; }
+
+            if (File.Exists(musicFile))
+            {
+                var songTitle = await File.ReadAllTextAsync(musicFile);
+                resource.NowPlaying = songTitle.Trim();
+            }
+
+            return resource;
         }
     }
 }

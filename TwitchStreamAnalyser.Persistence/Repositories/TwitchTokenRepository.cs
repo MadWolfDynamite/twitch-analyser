@@ -41,5 +41,10 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
 
             return tokenData;
         }
+
+        public void SetTwitchToken(string clientId, string token)
+        {
+            _apiClient.SetAuthentication(clientId, token);
+        }
     }
 }

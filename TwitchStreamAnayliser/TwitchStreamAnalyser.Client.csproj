@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tools.StreamSerializer\Tools.StreamSerializer.csproj" />
+    <ProjectReference Include="..\TwitchStreamAnalyser.Api\TwitchStreamAnalyser.Api.csproj" />
     <ProjectReference Include="..\TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj" />
   </ItemGroup>
 

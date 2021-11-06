@@ -7,6 +7,9 @@ namespace TwitchStreamAnalyser.Models
 {
     public class StreamDetail
     {
+        public string Name { get; set; }
+        public string AvatarUrl { get; set; }
+
         public int Viewers { get; set; }
         public string StreamStartDateTime { get; set; }
         public int Clips { get; set; }

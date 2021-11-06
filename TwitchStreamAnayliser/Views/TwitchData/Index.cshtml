@@ -26,8 +26,8 @@
 <div class="twitch-user float-left">
     <table>
         <tr>
-            <td><img src="@ViewData["UserAvatar"]" alt="@ViewData["DisplayName"]" /></td>
-            <td>@ViewData["DisplayName"]</td>
+            <td><img src="@Model.AvatarUrl" alt="@Model.Name" /></td>
+            <td>@Model.Name</td>
         </tr>
     </table>
 </div>
@@ -37,7 +37,7 @@
 </div>
 
 <div id="stream-data">
-    @if ((bool)ViewData["IsLive"])
+    @if (Model.IsLive)
     {
         <partial name="_LiveInformationPartial" model="Model" />
     }

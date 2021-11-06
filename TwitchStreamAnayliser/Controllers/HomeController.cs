@@ -53,17 +53,17 @@ namespace TwitchStreamAnalyser.Controllers
                 {
                     if (!String.IsNullOrWhiteSpace(tokenDetails.RefreshToken))
                     {
-                        var apiResponse = await TwitchValidationClient.RefreshAccessToken(tokenDetails.RefreshToken);
-                        if (apiResponse != null)
+                        var response = await _client.RefreshTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, tokenDetails.RefreshToken);
+                        if (response != null)
                         {
-                            tokenDetails.Token = apiResponse.Access_Token;
-                            tokenDetails.RefreshToken = apiResponse.Refresh_Token;
+                            tokenDetails.Token = response.Access_Token;
+                            tokenDetails.RefreshToken = response.Refresh_Token;
 
                             tokenDetails.DateTimestamp = DateTime.UtcNow;
 
                             JsonFileProcessor.SaveAccessTokenFile(tokenDetails);
 
-                            TwitchApiClient.SetAccessToken(tokenDetails.Token);
+                            await _client.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
                             return RedirectToAction("Index", "TwitchData");
                         }
                     }
@@ -71,7 +71,7 @@ namespace TwitchStreamAnalyser.Controllers
 
                 if (validationResponse)
                 {
-                    TwitchApiClient.SetAccessToken(tokenDetails.Token);
+                    await _client.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
                     return RedirectToAction("Index", "TwitchData");
                 }
             }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TwitchStreamAnalyser.Api.Extensions;
 using TwitchStreamAnalyser.Api.Resources;
 using TwitchStreamAnalyser.Domain.Models;
 using TwitchStreamAnalyser.Domain.Services;
@@ -39,6 +40,17 @@ namespace TwitchStreamAnalyser.Api.Controllers
             return await _twitchTokenService.ValidateTwitchToken(Id);
         }
 
+        [HttpPut]
+        public IActionResult SetToken([FromBody] UpdateTokenResource resource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            _twitchTokenService.SetTwitchToken(resource.ClientId, resource.Token);
+
+            return Ok();
+        }
+
         [Route("Url")]
         public IActionResult GetAuthUrl(string client, string url)
         {
@@ -56,7 +68,7 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [Route("OAuth"),HttpPost]
-        public async Task<TwitchTokenResource> GetToken([FromBody]SaveTokenResource resource)
+        public async Task<TwitchTokenResource> GetToken([FromBody] SaveTokenResource resource)
         {
             var cleanedUrl = string.IsNullOrWhiteSpace(resource.RedirectUrl) ? Request.GetEncodedUrl().Replace(Request.QueryString.Value, "") : resource.RedirectUrl;
 

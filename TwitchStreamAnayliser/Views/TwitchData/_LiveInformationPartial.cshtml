@@ -11,9 +11,9 @@
         <td><i class="fas fa-user fa-fw"></i></td>
         <td>@Html.DisplayFor(m => m.Viewers) @viewersLabel</td>
     </tr>
-    <tr>
+    <tr id="stream-run" class="offline">
         <td><i class="far fa-clock fa-fw"></i></td>
-        <td id="runtime">0:00:00</td>
+        <td id="runtime">--</td>
     </tr>
 
     <tr>
@@ -30,49 +30,24 @@
         <td>@Html.DisplayFor(m => m.ChannelFollowers) @followLabel</td>
     </tr>
 
-    <tr>
-        <td><i class="fas fa-music"></i></td>
-        <td>@Html.DisplayFor(m => m.NowPlaying)</td>
-    </tr>
+    @if (!string.IsNullOrWhiteSpace(Model.NowPlaying))
+    {
+        <tr>
+            <td><i class="fas fa-music"></i></td>
+            <td>@Html.DisplayFor(m => m.NowPlaying)</td>
+        </tr>
+    }
+
 </table>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="~/js/runtime_manager.js"></script>
 <script>
     $(document).ready(function () {
         var streamDateTime = Date.parse('@Model.StreamStartDateTime');
+
         $('#runtime').text(calculateStreamRuntime(streamDateTime, Date.now()));
+        $("#stream-run").removeClass("offline");
 
         setInterval(updateStreamRuntime, 1000, streamDateTime)
     });
-
-    function calculateStreamRuntime(start, end) {
-        var output;
-        var elasped = end - start;
-
-        var seconds = Math.floor(elasped / 1000);
-        var minutes = Math.floor(seconds / 60);
-        var hours = Math.floor(minutes / 60);
-        var days = Math.floor(hours / 24);
-
-        if (days >= 1) {
-            output = '' + days + ':' + (hours % 24) + ':' + formatNumberLength(minutes % 60, 2) + ':' + formatNumberLength(seconds % 60, 2)
-        }
-        else {
-            output = '' + hours + ':' + formatNumberLength(minutes % 60, 2) + ':' + formatNumberLength(seconds % 60, 2)
-        }
-
-        return output;
-    }
-    function formatNumberLength(num, length) {
-        var r = '' + num;
-        while (r.length < length) {
-            r = '0' + r;
-        }
-
-        return r;
-    }
-
-    function updateStreamRuntime(startDatetime) {
-        $('#runtime').text(calculateStreamRuntime(startDatetime, Date.now()));
-    }
 </script>

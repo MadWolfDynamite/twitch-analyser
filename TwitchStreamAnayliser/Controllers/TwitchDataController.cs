@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using TwitchStreamAnalyser.Models;
-using TwitchStreamAnalyser.TwitchIntegration;
-using TwitchStreamAnalyser.Controllers;
 using TwitchStreamAnalyser.FileProcessing;
 using TwitchStreamAnalyser.Client.Services;
 using Microsoft.Extensions.Options;

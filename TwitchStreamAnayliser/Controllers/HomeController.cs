@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TwitchStreamAnalyser.Models;
-using TwitchStreamAnalyser.TwitchIntegration;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using TwitchStreamAnalyser.FileProcessing;

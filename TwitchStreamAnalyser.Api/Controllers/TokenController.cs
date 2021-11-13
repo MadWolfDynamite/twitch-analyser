@@ -68,23 +68,29 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [Route("OAuth"),HttpPost]
-        public async Task<TwitchTokenResource> GetToken([FromBody] SaveTokenResource resource)
+        public async Task<IActionResult> GetToken([FromBody] SaveTokenResource resource)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
             var cleanedUrl = string.IsNullOrWhiteSpace(resource.RedirectUrl) ? Request.GetEncodedUrl().Replace(Request.QueryString.Value, "") : resource.RedirectUrl;
 
             var tokenData = await _twitchTokenService.GetTwitchToken(resource.ClientId, resource.ClientSecret, resource.Token, cleanedUrl);
             var tokenResource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
 
-            return tokenResource;
+            return Ok(tokenResource);
         }
 
         [Route("Refresh"),HttpPost]
-        public async Task<TwitchTokenResource> RefreshToekn([FromBody] SaveTokenResource resource)
+        public async Task<IActionResult> RefreshToekn([FromBody] SaveTokenResource resource)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
             var tokenData = await _twitchTokenService.RefreshTwitchToken(resource.ClientId, resource.ClientSecret, resource.Token);
             var tokenResource = _mapper.Map<TwitchToken, TwitchTokenResource>(tokenData);
 
-            return tokenResource;
+            return Ok(tokenResource);
         }
     }
 }

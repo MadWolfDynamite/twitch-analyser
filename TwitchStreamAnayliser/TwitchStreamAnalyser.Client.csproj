@@ -16,4 +16,8 @@
     <ProjectReference Include="..\TwitchStreamAnalyser.Domain\TwitchStreamAnalyser.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
 </Project>

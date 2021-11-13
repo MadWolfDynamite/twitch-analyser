@@ -48,30 +48,39 @@
     </script>
 }
 
-<div class="twitch-user float-left"><h2>Settings</h2></div>
+<div class="padded-container twitch-user float-left">
+    <table>
+        <tr>
+            <td><i class="fas fa-cogs fa-lg"></i></td>
+            <td>User Settings</td>
+        </tr>
+    </table>
+</div>
 
-<div class="user-settings float-right">
+<div class="padded-container float-right">
     <a asp-action="Index" asp-controller="TwitchData"><i class="fas fa-times"></i></a>
 </div>
 
-<table>
-    <tr>
-        <th>@Html.LabelFor(m => m.Login, "Channel")</th>
-        <td colspan="2">@Html.TextBoxFor(m => m.Login, new { placeholder = "leave blank for own channel" })</td>
-    </tr>
+<div class="padded-container">
+    <table class="settings">
+        <tr>
+            <th>@Html.LabelFor(m => m.Login, "Channel")</th>
+            <td class="settings-textbox">@Html.TextBoxFor(m => m.Login, new { placeholder = "leave blank for own channel" })</td>
+        </tr>
 
-    <tr>
-        <th>@Html.LabelFor(m => m.NowPlayingFile, "Now Playing")</th>
-        <td>@Html.TextBoxFor(m => m.NowPlayingFile, new { placeholder = @"example: C:\SampleFolder\NowPlaying.txt" })</td>
-    </tr>
+        <tr>
+            <th>@Html.LabelFor(m => m.NowPlayingFile, "Now Playing")</th>
+            <td class="settings-textbox">@Html.TextBoxFor(m => m.NowPlayingFile, new { placeholder = @"example: C:\SampleFolder\NowPlaying.txt" })</td>
+        </tr>
 
-    <tr>
-        <td colspan="2">
-            <input type="button" id="reset-button" value="Reset" />
-            <input type="button" id="default-button" value="Restore to Defaults" />
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2"><input type="button" id="save-button" value="Save" disabled /></td>
-    </tr>
-</table>
+        <tr>
+            <td colspan="2">
+                <input type="button" id="reset-button" value="Reset" />
+                <input type="button" id="default-button" value="Restore to Defaults" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="button" id="save-button" value="Save" disabled /></td>
+        </tr>
+    </table>
+</div>

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         @if (ViewData["Title"].Equals("Index")) { <title>Wolf Eye Twitch Analyser</title> }
-        else { <title>@ViewData["Title"] | Wolf's Eye Twitch Analyser</title> }
+        else { <title>@ViewData["Title"] | Wolf Eye Twitch Analyser</title> }
 
         <script src="https://kit.fontawesome.com/adac8629cc.js" crossorigin="anonymous"></script>
 
@@ -20,8 +20,8 @@
         </div>
 
         <footer>
-            <div class="container">
-                &copy; @DateTime.Now.Year - MadWolfDynamite
+            <div class="container padded-container">
+                <p>&copy; @DateTime.Now.Year - MadWolfDynamite</p>
             </div>
         </footer>
         @RenderSection("Scripts", required: false)

@@ -172,7 +172,8 @@ namespace TwitchStreamAnalyser.Client.Services
                 throw new Exception(content);
             }
 
-            var userData = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchAccountResource>>(stream).FirstOrDefault();
+            var users = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchAccountResource>>(stream);
+            var userData = string.IsNullOrWhiteSpace(user) ? users.FirstOrDefault() : users.FirstOrDefault(u => u.Login.Equals(user));
 
             resource.Name = userData.Display_Name;
             resource.AvatarUrl = userData.Profile_Image_Url;

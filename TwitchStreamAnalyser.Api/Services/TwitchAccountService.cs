@@ -32,6 +32,11 @@ namespace TwitchStreamAnalyser.Api.Services
             return await _twitchAccountRepository.GetTwitchChannel(user);
         }
 
+        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(string id)
+        {
+            return await _twitchAccountRepository.GetTwitchGame(id);
+        }
+
         public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id)
         {
             return await _twitchAccountRepository.GetTwitchStream(id);

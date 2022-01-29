@@ -7,6 +7,7 @@
         @if (ViewData["Title"].Equals("Index")) { <title>Wolf Eye Twitch Analyser</title> }
         else { <title>@ViewData["Title"] | Wolf Eye Twitch Analyser</title> }
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://kit.fontawesome.com/adac8629cc.js" crossorigin="anonymous"></script>
 
         <!-- Bootstrap CSS -->
@@ -24,6 +25,7 @@
                 <p>&copy; @DateTime.Now.Year - MadWolfDynamite</p>
             </div>
         </footer>
+
         @RenderSection("Scripts", required: false)
     </body>
 </html>

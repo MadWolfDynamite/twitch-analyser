@@ -31,7 +31,7 @@ namespace TwitchStreamAnalyser.Api.Controllers
         {
             var accounts = await _twitchAccountService.ListAsync();
 
-            var channels = await _twitchAccountService.GetTwitchChannel(accounts.First().Display_Name);
+            var channels = await _twitchAccountService.GetTwitchChannel(accounts.First().Login);
             var resource = _mapper.Map<IEnumerable<TwitchChannel>, IEnumerable<TwitchChannelResource>>(channels);
 
             return resource;

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30309.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Client", "TwitchStreamAnayliser\TwitchStreamAnalyser.Client.csproj", "{785AB143-1C3C-4B43-AA4F-F5811912176F}"
 EndProject
@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Twitch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamAnalyser.Persistence", "TwitchStreamAnalyser.Persistence\TwitchStreamAnalyser.Persistence.csproj", "{4B79E88E-075F-4A09-B4AE-04C532C3E78E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools.StreamSerializer", "Tools.StreamSerializer\Tools.StreamSerializer.csproj", "{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools.StreamSerializer", "Tools.StreamSerializer\Tools.StreamSerializer.csproj", "{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamAnayliser.WebSockets", "TwitchStreamAnayliser.WebSocket\TwitchStreamAnayliser.WebSockets.csproj", "{5BC83988-5CBB-4831-8195-ECE67E091B1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A37E39F5-A01E-4495-9CAD-B4F70E5A301D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BC83988-5CBB-4831-8195-ECE67E091B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BC83988-5CBB-4831-8195-ECE67E091B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BC83988-5CBB-4831-8195-ECE67E091B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BC83988-5CBB-4831-8195-ECE67E091B1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

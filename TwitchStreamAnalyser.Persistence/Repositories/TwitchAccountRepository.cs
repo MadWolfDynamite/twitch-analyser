@@ -24,6 +24,11 @@ namespace TwitchStreamAnalyser.Persistence.Repositories
             return await _apiClient.GetTwitchChannelsAsync(user);
         }
 
+        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(string id)
+        {
+            return await _apiClient.GetTwitchGameAsync(id);
+        }
+
         public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id)
         {
             return await _apiClient.GetTwitchStreamsAsync(id);

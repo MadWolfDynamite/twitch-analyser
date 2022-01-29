@@ -53,52 +53,25 @@ namespace TwitchStreamAnalyser.TwitchApi
         public async Task<IEnumerable<TwitchAccount>> GetTwitchAccountsAsync(string login = null)
         {
             string apiPath = String.IsNullOrWhiteSpace(login) ? "users" : $"users?login={login}";
-
-            var response = await _client.GetAsync(apiPath);
-            var stream = await response.Content.ReadAsStreamAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var accountData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchAccount>>(stream);
-                return accountData.Data;
-            }
-
-            var content = await StreamSerializer.StreamToStringAsync(stream);
-            throw new Exception(content);
+            return await GetApiData<TwitchAccount>(apiPath);
         }
 
         public async Task<IEnumerable<TwitchChannel>> GetTwitchChannelsAsync(string login)
         {
             string apiPath = $"search/channels?query={login}";
+            return await GetApiData<TwitchChannel>(apiPath);
+        }
 
-            var response = await _client.GetAsync(apiPath);
-            var stream = await response.Content.ReadAsStreamAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var channelData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchChannel>>(stream);
-                return channelData.Data;
-            }
-
-            var content = await StreamSerializer.StreamToStringAsync(stream);
-            throw new Exception(content);
+        public async Task<IEnumerable<TwitchGame>> GetTwitchGameAsync(string id)
+        {
+            string apiPath = $"games?id={id}";
+            return await GetApiData<TwitchGame>(apiPath);
         }
 
         public async Task<IEnumerable<TwitchStream>> GetTwitchStreamsAsync(string id)
         {
             string apiPath = $"streams?user_id={id}";
-
-            var response = await _client.GetAsync(apiPath);
-            var stream = await response.Content.ReadAsStreamAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var streamData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchStream>>(stream);
-                return streamData.Data;
-            }
-
-            var content = await StreamSerializer.StreamToStringAsync(stream);
-            throw new Exception(content);
+            return await GetApiData<TwitchStream>(apiPath);
         }
 
         public async Task<int> GetTotalTwitchFollowersAsync(string id)
@@ -147,6 +120,21 @@ namespace TwitchStreamAnalyser.TwitchApi
             } while (response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(clipData.Pagination.Cursor));
 
             return result;
+        }
+
+        private async Task<IEnumerable<T>> GetApiData<T>(string path)
+        {
+            var response = await _client.GetAsync(path);
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var outputData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<T>>(stream);
+                return outputData.Data;
+            }
+
+            var content = await StreamSerializer.StreamToStringAsync(stream);
+            throw new Exception(content);
         }
     }
 }

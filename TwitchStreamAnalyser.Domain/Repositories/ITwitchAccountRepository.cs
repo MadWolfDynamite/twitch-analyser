@@ -14,6 +14,8 @@ namespace TwitchStreamAnalyser.Domain.Repositories
 
         Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user);
 
+        Task<IEnumerable<TwitchGame>> GetTwitchGame(string id); 
+
         Task<IEnumerable<TwitchStream>> GetTwitchStream(string id);
 
         Task<int> GetTwitchClips(string id, string date);

@@ -11,6 +11,7 @@ namespace TwitchStreamAnalyser.Api.Mapping
         {
             CreateMap<TwitchAccount, TwitchAccountResource>();
             CreateMap<TwitchChannel, TwitchChannelResource>();
+            CreateMap<TwitchGame, TwitchGameResource>();
             CreateMap<TwitchStream, TwitchStreamResource>();
 
             CreateMap<TwitchToken, TwitchTokenResource>();

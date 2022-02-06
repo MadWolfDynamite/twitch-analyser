@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using TwitchStreamAnalyser.FileProcessing;
 using TwitchStreamAnalyser.Client.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace TwitchStreamAnalyser.Controllers
 {
@@ -20,7 +21,27 @@ namespace TwitchStreamAnalyser.Controllers
         private readonly ILogger<HomeController> _logger;
 
         private readonly TwitchAppClient _clientSettings;
-        private readonly ApiClientService _client;
+        
+        private ApiClientService ApiClient
+        {
+            get
+            {
+                if (HttpContext == null)
+                    return new ApiClientService();
+
+                var name = "apiClient";
+                if (!HttpContext.Session.Keys.Contains(name))
+                {
+                    var client = new ApiClientService();
+                    client.SetApiEndpoint(_clientSettings.ApiEndpoint);
+
+                    HttpContext.Session.SetString(name, JsonConvert.SerializeObject(client));
+                }
+
+                var json = HttpContext.Session.GetString(name);
+                return JsonConvert.DeserializeObject<ApiClientService>(json);
+            }
+        }
 
         private static readonly string appDataFolder = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\WolfEyeAnalyser";
 
@@ -29,9 +50,6 @@ namespace TwitchStreamAnalyser.Controllers
             _logger = logger;
 
             _clientSettings = clientSettings.Value;
-
-            _client = ApiClientService.GetClient();
-            _client.SetApiEndpoint(_clientSettings.ApiEndpoint);
         }
 
         public async Task<IActionResult> Index()
@@ -45,14 +63,14 @@ namespace TwitchStreamAnalyser.Controllers
             if (System.IO.File.Exists($@"{appDataFolder}\SavedToken.json"))
             {
                 var tokenDetails = await JsonFileProcessor.LoadAccessTokenFile();
-                var validationResponse = await _client.ValidateAuthToken(tokenDetails.Token);
+                var validationResponse = await ApiClient.ValidateAuthToken(tokenDetails.Token);
 
                 var timeSinceValidation = DateTime.UtcNow.Subtract(tokenDetails.DateTimestamp);
                 if (timeSinceValidation.TotalMinutes >= 30 && !validationResponse)
                 {
                     if (!String.IsNullOrWhiteSpace(tokenDetails.RefreshToken))
                     {
-                        var response = await _client.RefreshTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, tokenDetails.RefreshToken);
+                        var response = await ApiClient.RefreshTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, tokenDetails.RefreshToken);
                         if (response != null)
                         {
                             tokenDetails.Token = response.Access_Token;
@@ -62,21 +80,25 @@ namespace TwitchStreamAnalyser.Controllers
 
                             JsonFileProcessor.SaveAccessTokenFile(tokenDetails);
 
-                            await _client.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
-                            return RedirectToAction("Index", "TwitchData");
+                            await ApiClient.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
+                            HttpContext.Session.SetString("apiClient", JsonConvert.SerializeObject(ApiClient));
+
+                            return RedirectToAction("Index", "Dashboard");
                         }
                     }
                 }
 
                 if (validationResponse)
                 {
-                    await _client.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
-                    return RedirectToAction("Index", "TwitchData");
+                    await ApiClient.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
+                    HttpContext.Session.SetString("apiClient", JsonConvert.SerializeObject(ApiClient));
+
+                    return RedirectToAction("Index", "Dashboard");
                 }
             }
 
-            var redirectUrl = Url.Action("Authentication", "TwitchData", null, Request.Scheme);
-            ViewData["AuthenticationUrl"] = await _client.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
+            var redirectUrl = Url.Action("Authentication", "Dashboard", null, Request.Scheme);
+            ViewData["AuthenticationUrl"] = await ApiClient.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
 
             return View();
         }

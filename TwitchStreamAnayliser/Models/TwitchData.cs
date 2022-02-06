@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace TwitchStreamAnalyser.Models
 {
-    public class StreamDetail
+    public class TwitchData
     {
+        private string _artUrl;
+
         public string Name { get; set; }
         public string AvatarUrl { get; set; }
 
@@ -16,6 +18,15 @@ namespace TwitchStreamAnalyser.Models
 
         public int ChannelViews { get; set; }
         public int ChannelFollowers { get; set; }
+
+        public string GameName { get; set; }
+        public string GameArtUrl { 
+            get { return _artUrl; } 
+            set 
+            { 
+                _artUrl = value.Replace("{width}", "390").Replace("{height}", "540"); //Add explicit img size
+            }
+        }
 
         public bool IsLive { get; set; }
 

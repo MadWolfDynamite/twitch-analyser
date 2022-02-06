@@ -1,4 +1,4 @@
-﻿@model TwitchStreamAnalyser.Models.StreamDetail
+﻿@model TwitchStreamAnalyser.Models.TwitchData
 @{
     var viewersLabel = Model.Viewers == 1 ? "Viewer" : "Viewers";
     var clipsLabel = Model.Clips == 1 ? "Clip" : "Clips";
@@ -48,6 +48,6 @@
         $('#runtime').text(calculateStreamRuntime(streamDateTime, Date.now()));
         $("#stream-run").removeClass("offline");
 
-        setInterval(updateStreamRuntime, 1000, streamDateTime)
+        setTimeout(updateStreamRuntime, 1000, streamDateTime);
     });
 </script>

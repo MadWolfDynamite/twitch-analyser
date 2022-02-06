@@ -24,6 +24,10 @@ namespace TwitchStreamAnalyser
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<TwitchAppClient>(Configuration.GetSection("TwitchAppClient"));
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
             services.AddControllersWithViews();
         }
 
@@ -42,6 +46,8 @@ namespace TwitchStreamAnalyser
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseRouting();
 

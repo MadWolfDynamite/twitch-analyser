@@ -25,6 +25,8 @@ function formatNumberLength(num, length) {
 	return r;
 }
 
-function updateStreamRuntime(startDatetime) {
-	$('#runtime').text(calculateStreamRuntime(startDatetime, Date.now()));
+function updateStreamRuntime(startDateTime) {
+	$('#runtime').text(calculateStreamRuntime(startDateTime, Date.now()));
+
+	setTimeout(updateStreamRuntime, 1000, streamDateTime);
 }

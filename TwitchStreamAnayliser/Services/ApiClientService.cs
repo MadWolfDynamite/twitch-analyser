@@ -15,19 +15,7 @@ namespace TwitchStreamAnalyser.Client.Services
 {
     public sealed class ApiClientService
     {
-        public static readonly ApiClientService _instance;
         private static readonly HttpClient _client = new HttpClient();
-
-        static ApiClientService()
-        {
-            _instance = new ApiClientService();
-        }
-        private ApiClientService() { }
-
-        public static ApiClientService GetClient()
-        {
-            return _instance;
-        }
 
         public void SetApiEndpoint(string endpoint)
         {
@@ -157,9 +145,9 @@ namespace TwitchStreamAnalyser.Client.Services
             throw new Exception(content);
         }
 
-        public async Task<StreamDetail> GetStreamData(string user, string musicFile)
+        public async Task<TwitchData> GetTwitchData(string user, string musicFile)
         {
-            var resource = new StreamDetail();
+            var resource = new TwitchData();
 
             string apiPath = $"account/{user}";
 
@@ -229,6 +217,24 @@ namespace TwitchStreamAnalyser.Client.Services
                         else { resource.Clips = 0; }
                     }
                 }
+            }
+
+            apiPath = $"game/{channelData.Game_Id}";
+
+            response = await _client.GetAsync(apiPath);
+            stream = await response.Content.ReadAsStreamAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var gameData = StreamSerializer.DeserialiseJsonFromStream<IEnumerable<TwitchGameResource>>(stream).FirstOrDefault(g => g.Id.Equals(channelData.Game_Id));
+
+                resource.GameName = gameData.Name;
+                resource.GameArtUrl = gameData.Box_Art_Url;
+            }
+            else 
+            {
+                resource.GameName = "--";
+                resource.GameArtUrl = "";
             }
 
             apiPath = $"follower/{userData.Id}";

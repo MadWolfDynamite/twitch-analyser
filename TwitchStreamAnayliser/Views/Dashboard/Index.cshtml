@@ -1,4 +1,4 @@
-﻿@model TwitchStreamAnalyser.Models.StreamDetail
+﻿@model TwitchStreamAnalyser.Models.TwitchData
 @{
     ViewData["Title"] = "Index";
 }
@@ -12,7 +12,7 @@
         function refreshStreamStats() {
             var request = $.ajax({
                 method: 'GET',
-                url: '@Url.Action("RefreshStreamData", "TwitchData")'
+                url: '@Url.Action("RefreshStreamData", "Dashboard")'
             });
 
             request.done(function (data) {

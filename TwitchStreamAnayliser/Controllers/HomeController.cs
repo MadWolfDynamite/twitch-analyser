@@ -20,28 +20,7 @@ namespace TwitchStreamAnalyser.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        private readonly TwitchAppClient _clientSettings;
-        
-        private ApiClientService ApiClient
-        {
-            get
-            {
-                if (HttpContext == null)
-                    return new ApiClientService();
-
-                var name = "apiClient";
-                if (!HttpContext.Session.Keys.Contains(name))
-                {
-                    var client = new ApiClientService();
-                    client.SetApiEndpoint(_clientSettings.ApiEndpoint);
-
-                    HttpContext.Session.SetString(name, JsonConvert.SerializeObject(client));
-                }
-
-                var json = HttpContext.Session.GetString(name);
-                return JsonConvert.DeserializeObject<ApiClientService>(json);
-            }
-        }
+        private readonly TwitchAppClient _clientSettings; 
 
         private static readonly string appDataFolder = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\WolfEyeAnalyser";
 
@@ -50,6 +29,7 @@ namespace TwitchStreamAnalyser.Controllers
             _logger = logger;
 
             _clientSettings = clientSettings.Value;
+            ApiClientService.SetApiEndpoint(_clientSettings.ApiEndpoint);
         }
 
         public async Task<IActionResult> Index()
@@ -63,14 +43,14 @@ namespace TwitchStreamAnalyser.Controllers
             if (System.IO.File.Exists($@"{appDataFolder}\SavedToken.json"))
             {
                 var tokenDetails = await JsonFileProcessor.LoadAccessTokenFile();
-                var validationResponse = await ApiClient.ValidateAuthToken(tokenDetails.Token);
+                var validationResponse = await ApiClientService.ValidateAuthToken(tokenDetails.Token);
 
                 var timeSinceValidation = DateTime.UtcNow.Subtract(tokenDetails.DateTimestamp);
                 if (timeSinceValidation.TotalMinutes >= 30 && !validationResponse)
                 {
                     if (!String.IsNullOrWhiteSpace(tokenDetails.RefreshToken))
                     {
-                        var response = await ApiClient.RefreshTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, tokenDetails.RefreshToken);
+                        var response = await ApiClientService.RefreshTwitchTokenAsync(_clientSettings.Id, _clientSettings.Secret, tokenDetails.RefreshToken);
                         if (response != null)
                         {
                             tokenDetails.Token = response.Access_Token;
@@ -80,8 +60,10 @@ namespace TwitchStreamAnalyser.Controllers
 
                             JsonFileProcessor.SaveAccessTokenFile(tokenDetails);
 
-                            await ApiClient.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
-                            HttpContext.Session.SetString("apiClient", JsonConvert.SerializeObject(ApiClient));
+                            await ApiClientService.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
+
+                            HttpContext.Session.SetString("ClientId", _clientSettings.Id);
+                            HttpContext.Session.SetString("AuthToken", tokenDetails.Token);
 
                             return RedirectToAction("Index", "Dashboard");
                         }
@@ -90,15 +72,17 @@ namespace TwitchStreamAnalyser.Controllers
 
                 if (validationResponse)
                 {
-                    await ApiClient.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
-                    HttpContext.Session.SetString("apiClient", JsonConvert.SerializeObject(ApiClient));
+                    await ApiClientService.SetTwitchTokenAsync(_clientSettings.Id, tokenDetails.Token);
+
+                    HttpContext.Session.SetString("ClientId", _clientSettings.Id);
+                    HttpContext.Session.SetString("AuthToken", tokenDetails.Token);
 
                     return RedirectToAction("Index", "Dashboard");
                 }
             }
 
             var redirectUrl = Url.Action("Authentication", "Dashboard", null, Request.Scheme);
-            ViewData["AuthenticationUrl"] = await ApiClient.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
+            ViewData["AuthenticationUrl"] = await ApiClientService.GetAuthenticationUrl(_clientSettings.Id, redirectUrl);
 
             return View();
         }

@@ -25,18 +25,18 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<TwitchAccountResource>> GetAsync()
+        public async Task<IEnumerable<TwitchAccountResource>> GetAsync(string client, string token)
         {
-            var accounts = await _twitchAccountService.ListAsync();
+            var accounts = await _twitchAccountService.ListAsync(client, token);
             var resource = _mapper.Map<IEnumerable<TwitchAccount>, IEnumerable<TwitchAccountResource>>(accounts);
 
             return resource;
         }
 
         [HttpGet("{id}")]
-        public async Task<IEnumerable<TwitchAccountResource>> GetAsync(string id)
+        public async Task<IEnumerable<TwitchAccountResource>> GetAsync(string id, string client, string token)
         {
-            var accounts = await _twitchAccountService.GetTwitchAccount(id);
+            var accounts = await _twitchAccountService.GetTwitchAccount(client, token, id);
             var resource = _mapper.Map<IEnumerable<TwitchAccount>, IEnumerable<TwitchAccountResource>>(accounts);
 
             return resource;

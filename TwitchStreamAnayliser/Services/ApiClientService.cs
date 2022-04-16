@@ -13,17 +13,17 @@ using TwitchStreamAnalyser.Models;
 
 namespace TwitchStreamAnalyser.Client.Services
 {
-    public sealed class ApiClientService
+    public static class ApiClientService
     {
         private static readonly HttpClient _client = new HttpClient();
 
-        public void SetApiEndpoint(string endpoint)
+        public static void SetApiEndpoint(string endpoint)
         {
             if (_client.BaseAddress == null)
                 _client.BaseAddress = new Uri(endpoint);
         }
 
-        public async Task<bool> ValidateAuthToken(string token)
+        public static async Task<bool> ValidateAuthToken(string token)
         {
             string apiPath = $"token/{token}";
 
@@ -40,7 +40,7 @@ namespace TwitchStreamAnalyser.Client.Services
             throw new Exception(content);
         }
 
-        public async Task<string> GetAuthenticationUrl(string client, string url)
+        public static async Task<string> GetAuthenticationUrl(string client, string url)
         {
             string apiPath = "token/url";
 
@@ -58,7 +58,7 @@ namespace TwitchStreamAnalyser.Client.Services
             throw new Exception(content);
         }
 
-        public async Task<TwitchToken> GetTwitchTokenAsync(string client, string secret, string code, string url)
+        public static async Task<TwitchToken> GetTwitchTokenAsync(string client, string secret, string code, string url)
         {
             string apiPath = "token/oauth";
 
@@ -89,7 +89,7 @@ namespace TwitchStreamAnalyser.Client.Services
             throw new Exception(content);
         }
 
-        public async Task SetTwitchTokenAsync(string client, string token)
+        public static async Task SetTwitchTokenAsync(string client, string token)
         {
             string apiPath = "token";
 
@@ -115,7 +115,7 @@ namespace TwitchStreamAnalyser.Client.Services
             }
         }
 
-        public async Task<TwitchToken> RefreshTwitchTokenAsync(string client, string secret, string token)
+        public static async Task<TwitchToken> RefreshTwitchTokenAsync(string client, string secret, string token)
         {
             string apiPath = "token/refresh";
 
@@ -145,11 +145,11 @@ namespace TwitchStreamAnalyser.Client.Services
             throw new Exception(content);
         }
 
-        public async Task<TwitchData> GetTwitchData(string user, string musicFile)
+        public static async Task<TwitchData> GetTwitchData(string user, string client, string token, string musicFile = "")
         {
             var resource = new TwitchData();
 
-            string apiPath = $"account/{user}";
+            string apiPath = GetApiPath($"account/{user}", client, token);
 
             var response = await _client.GetAsync(apiPath);
             var stream = await response.Content.ReadAsStreamAsync();
@@ -168,7 +168,7 @@ namespace TwitchStreamAnalyser.Client.Services
 
             resource.ChannelViews = userData.View_Count;
 
-            apiPath = $"channel/{userData.Login}";
+            apiPath = GetApiPath($"channel/{userData.Login}", client, token);
 
             response = await _client.GetAsync(apiPath);
             stream = await response.Content.ReadAsStreamAsync();
@@ -186,7 +186,7 @@ namespace TwitchStreamAnalyser.Client.Services
 
             if (resource.IsLive)
             {
-                apiPath = $"stream/{userData.Id}";
+                apiPath = GetApiPath($"stream/{userData.Id}", client, token);
 
                 response = await _client.GetAsync(apiPath);
                 stream = await response.Content.ReadAsStreamAsync();
@@ -205,6 +205,8 @@ namespace TwitchStreamAnalyser.Client.Services
 
                         apiPath = $"clip/{userData.Id}";
                         apiPath += $"?date={streamData.Started_At}";
+                        apiPath += $"&client={client}";
+                        apiPath += $"&token={token}";
 
                         response = await _client.GetAsync(apiPath);
                         stream = await response.Content.ReadAsStreamAsync();
@@ -219,7 +221,7 @@ namespace TwitchStreamAnalyser.Client.Services
                 }
             }
 
-            apiPath = $"game/{channelData.Game_Id}";
+            apiPath = GetApiPath($"game/{channelData.Game_Id}", client, token);
 
             response = await _client.GetAsync(apiPath);
             stream = await response.Content.ReadAsStreamAsync();
@@ -237,7 +239,7 @@ namespace TwitchStreamAnalyser.Client.Services
                 resource.GameArtUrl = "";
             }
 
-            apiPath = $"follower/{userData.Id}";
+            apiPath = GetApiPath($"follower/{userData.Id}", client, token);
 
             response = await _client.GetAsync(apiPath);
             stream = await response.Content.ReadAsStreamAsync();
@@ -256,6 +258,15 @@ namespace TwitchStreamAnalyser.Client.Services
             }
 
             return resource;
+        }
+
+        private static string GetApiPath(string path, string client, string token)
+        {
+            var apiPath = path;
+            apiPath += $"?client={client}";
+            apiPath += $"&token={token}";
+
+            return apiPath;
         }
     }
 }

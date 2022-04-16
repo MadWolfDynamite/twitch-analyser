@@ -17,39 +17,39 @@ namespace TwitchStreamAnalyser.Api.Services
             _twitchAccountRepository = twitchAccountRepository;
         }
 
-        public async Task<IEnumerable<TwitchAccount>> ListAsync()
+        public async Task<IEnumerable<TwitchAccount>> ListAsync(string clientId, string token)
         {
-            return await _twitchAccountRepository.ListAsync();
+            return await _twitchAccountRepository.ListAsync(clientId, token);
         }
 
-        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user)
+        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string clientId, string token, string user)
         {
-            return await _twitchAccountRepository.GetTwitchAccount(user);
+            return await _twitchAccountRepository.GetTwitchAccount(clientId, token, user);
         }
 
-        public async Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user)
+        public async Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user, string clientId, string token)
         {
-            return await _twitchAccountRepository.GetTwitchChannel(user);
+            return await _twitchAccountRepository.GetTwitchChannel(user, clientId, token);
         }
 
-        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(string id)
+        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(string id, string clientId, string token)
         {
-            return await _twitchAccountRepository.GetTwitchGame(id);
+            return await _twitchAccountRepository.GetTwitchGame(id, clientId, token);
         }
 
-        public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id)
+        public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id, string clientId, string token)
         {
-            return await _twitchAccountRepository.GetTwitchStream(id);
+            return await _twitchAccountRepository.GetTwitchStream(id, clientId, token);
         }
 
-        public async Task<int> GetTwitchClips(string id, string date)
+        public async Task<int> GetTwitchClips(string id, string date, string clientId, string token)
         {
-            return await _twitchAccountRepository.GetTwitchClips(id, date);
+            return await _twitchAccountRepository.GetTwitchClips(id, date, clientId, token);
         }
 
-        public async Task<int> GetTwitchFollowers(string id)
+        public async Task<int> GetTwitchFollowers(string id, string clientId, string token)
         {
-            return await _twitchAccountRepository.GetTwitchFollowers(id);
+            return await _twitchAccountRepository.GetTwitchFollowers(id, clientId, token);
         }
     }
 }

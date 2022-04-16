@@ -20,20 +20,20 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<int> GetAsync()
+        public async Task<int> GetAsync(string client, string token)
         {
-            var accounts = await _twitchAccountService.ListAsync();
+            var accounts = await _twitchAccountService.ListAsync(client, token);
             var user = accounts.First();
 
-            var resource = await _twitchAccountService.GetTwitchClips(user.Id, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+            var resource = await _twitchAccountService.GetTwitchClips(user.Id, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"), client, token);
 
             return resource;
         }
 
         [HttpGet("{id}")]
-        public async Task<int> GetAsync(string id, string date)
+        public async Task<int> GetAsync(string id, string date, string client, string token)
         {
-            var resource = await _twitchAccountService.GetTwitchClips(id, date);
+            var resource = await _twitchAccountService.GetTwitchClips(id, date, client, token);
 
             return resource;
         }

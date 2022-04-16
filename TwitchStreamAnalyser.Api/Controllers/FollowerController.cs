@@ -20,18 +20,18 @@ namespace TwitchStreamAnalyser.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<int> GetAsync()
+        public async Task<int> GetAsync(string client, string token)
         {
-            var accounts = await _twitchAccountService.ListAsync();
-            var resource = await _twitchAccountService.GetTwitchFollowers(accounts.First().Id);
+            var accounts = await _twitchAccountService.ListAsync(client, token);
+            var resource = await _twitchAccountService.GetTwitchFollowers(accounts.First().Id, client, token);
 
             return resource;
         }
 
         [HttpGet("{id}")]
-        public async Task<int> GetAsync(string id)
+        public async Task<int> GetAsync(string id, string client, string token)
         {
-            var resource = await _twitchAccountService.GetTwitchFollowers(id);
+            var resource = await _twitchAccountService.GetTwitchFollowers(id, client, token);
             return resource;
         }
     }

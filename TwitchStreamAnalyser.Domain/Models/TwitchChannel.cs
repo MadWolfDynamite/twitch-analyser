@@ -15,7 +15,7 @@ namespace TwitchStreamAnalyser.Domain.Models
         public string Game_Name { get; set; }
 
         public bool Is_Live { get; set; }
-        public IEnumerable<string> Tags_Ids { get; set; }
+        public IEnumerable<string> Tags { get; set; }
 
         public string Thumbnail_Url { get; set; }
         public string Title { get; set; }

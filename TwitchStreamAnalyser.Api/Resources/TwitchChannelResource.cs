@@ -8,6 +8,8 @@ namespace TwitchStreamAnalyser.Api.Resources
     public class TwitchChannelResource
     {
         public string Id { get; set; }
+        public string Display_Name { get; set; }
+
         public string Title { get; set; }
 
         public string Game_Id { get; set; }

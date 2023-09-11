@@ -8,18 +8,20 @@ namespace TwitchStreamAnalyser.Domain.Repositories
 {
     public interface ITwitchAccountRepository
     {
-        Task<IEnumerable<TwitchAccount>> ListAsync(string clientId, string token);
+        Task<IEnumerable<TwitchAccount>> ListAsync();
 
-        Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string clientId, string token, string user);
+        Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user);
 
-        Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user, string clientId, string token);
+        Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user);
 
-        Task<IEnumerable<TwitchGame>> GetTwitchGame(string id, string clientId, string token); 
+        Task<IEnumerable<TwitchGame>> GetTwitchGame(long id); 
 
-        Task<IEnumerable<TwitchStream>> GetTwitchStream(string id, string clientId, string token);
+        Task<IEnumerable<TwitchStream>> GetTwitchStream(long id);
 
-        Task<int> GetTwitchClips(string id, string date, string clientId, string token);
+        Task<int> GetTwitchClips(long id, string date);
 
-        Task<int> GetTwitchFollowers(string id, string clientId, string token);
+        Task<int> GetTwitchFollowers(long id);
+
+        Task SendTwitchAnnoucement(long id, string message);
     }
 }

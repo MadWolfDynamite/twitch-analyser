@@ -1,52 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Tools.StreamSerializer;
 using TwitchStreamAnalyser.Domain.Models;
+using TwitchStreamAnalyser.TwitchApi.Contracts;
 using TwitchStreamAnalyser.TwitchApi.Models;
 
 namespace TwitchStreamAnalyser.TwitchApi
 {
-    public sealed class TwitchTokenClient
+    public sealed class TwitchTokenClient : ITwitchTokenClient
     {
-        private static readonly TwitchTokenClient _instance;
-        private static readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient m_client;
 
-        static TwitchTokenClient()
+        public TwitchTokenClient(IHttpClientFactory httpClientFactory)
         {
-            _instance = new TwitchTokenClient();
-            _client.BaseAddress = new Uri("https://id.twitch.tv/");
-        }
-        private TwitchTokenClient() { }
-
-        public static TwitchTokenClient GetClient()
-        {
-            return _instance;
+            m_client = httpClientFactory.CreateClient("twitch-oauth");
         }
 
-        public async Task<bool> ValidateTokenAsync(string token)
+        public async Task<bool> ValidateAccessTokenAsync(string token)
         {
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("OAuth", token);
-            HttpResponseMessage response = await _client.GetAsync("oauth2/validate");
+            m_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("OAuth", token);
+            HttpResponseMessage response = await m_client.GetAsync("oauth2/validate");
 
             return response.IsSuccessStatusCode;
         }
 
-        public string GetAuthenticationUrl(string clientId, string redirectUrl)
+        public string GenerateAuthenticationUrl(string clientId, string redirectUrl)
         {
-            string authUrl = $"{_client.BaseAddress}oauth2/authorize";
+            string authUrl = $"{m_client.BaseAddress}oauth2/authorize";
 
             authUrl += $"?client_id={clientId}";
             authUrl += $"&redirect_uri={redirectUrl}";
             authUrl += "&response_type=code";
-            //authUrl += "&scope=user:read:email";
 
             return authUrl;
         }
 
-        public async Task<TwitchToken> GetAccessTokenAsync(string clientId, string clientSecret, string code, string redirectUrl)
+        public async Task<TwitchToken> GetNewAccessTokenAsync(string clientId, string clientSecret, string code, string redirectUrl)
         {
             string apiPath = "oauth2/token";
 
@@ -56,7 +49,7 @@ namespace TwitchStreamAnalyser.TwitchApi
             apiPath += "&grant_type=authorization_code";
             apiPath += $"&redirect_uri={redirectUrl}";
 
-            var response = await _client.PostAsync(apiPath, null);
+            var response = await m_client.PostAsync(apiPath, null);
             var stream = await response.Content.ReadAsStreamAsync();
 
             if (response.IsSuccessStatusCode)
@@ -69,7 +62,7 @@ namespace TwitchStreamAnalyser.TwitchApi
             throw new Exception(content);
         }
 
-        public async Task<TwitchToken> RefreshTwitchTokenAsync(string clientId, string clientSecret, string token)
+        public async Task<TwitchToken> RefreshAccessToken(string clientId, string clientSecret, string token)
         {
             string apiPath = "oauth2/token";
 
@@ -78,7 +71,7 @@ namespace TwitchStreamAnalyser.TwitchApi
             apiPath += $"&refresh_token={token}";
             apiPath += "&grant_type=refresh_token";
 
-            var response = await _client.PostAsync(apiPath, null);
+            var response = await m_client.PostAsync(apiPath, null);
             var stream = await response.Content.ReadAsStreamAsync();
 
             if (response.IsSuccessStatusCode)

@@ -4,44 +4,52 @@ using System.Text;
 using System.Threading.Tasks;
 using TwitchStreamAnalyser.Domain.Models;
 using TwitchStreamAnalyser.Domain.Repositories;
+using TwitchStreamAnalyser.TwitchApi.Contracts;
 
 namespace TwitchStreamAnalyser.Persistence.Repositories
 {
     public class TwitchAccountRepository : BaseRepository, ITwitchAccountRepository
     {
-        public async Task<IEnumerable<TwitchAccount>> ListAsync(string clientId, string token)
+        public TwitchAccountRepository(ITwitchApiClient apiClient, ITwitchTokenClient tokenClient) : base(apiClient, tokenClient) { }
+
+        public async Task<IEnumerable<TwitchAccount>> ListAsync()
         {
-            return await _apiClient.GetTwitchAccountsAsync(clientId, token);
+            return await m_apiClient.GetTwitchAccountsAsync(string.Empty);
         }
 
-        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string clientId, string token, string user)
+        public async Task<IEnumerable<TwitchAccount>> GetTwitchAccount(string user)
         {
-            return await _apiClient.GetTwitchAccountsAsync(clientId, token, user);
+            return await m_apiClient.GetTwitchAccountsAsync(user);
         }
 
-        public async Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user, string clientId, string token)
+        public async Task<IEnumerable<TwitchChannel>> GetTwitchChannel(string user)
         {
-            return await _apiClient.GetTwitchChannelsAsync(user, clientId, token);
+            return await m_apiClient.GetTwitchChannelsAsync(user);
         }
 
-        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(string id, string clientId, string token)
+        public async Task<IEnumerable<TwitchGame>> GetTwitchGame(long id)
         {
-            return await _apiClient.GetTwitchGameAsync(id, clientId, token);
+            return await m_apiClient.GetTwitchGameAsync(id);
         }
 
-        public async Task<IEnumerable<TwitchStream>> GetTwitchStream(string id, string clientId, string token)
+        public async Task<IEnumerable<TwitchStream>> GetTwitchStream(long id)
         {
-            return await _apiClient.GetTwitchStreamsAsync(id, clientId, token);
+            return await m_apiClient.GetTwitchStreamsAsync(id);
         }
 
-        public async Task<int> GetTwitchClips(string id, string date, string clientId, string token)
+        public async Task<int> GetTwitchClips(long id, string date)
         {
-            return await _apiClient.GetTotalTwitchClipsAsync(id, date, clientId, token);
+            return await m_apiClient.GetTwitchClipCountAsync(id, date);
         }
 
-        public async Task<int> GetTwitchFollowers(string id, string clientId, string token)
+        public async Task<int> GetTwitchFollowers(long id)
         {
-            return await _apiClient.GetTotalTwitchFollowersAsync(id, clientId, token);
+            return await m_apiClient.GetTwitchFollowerCountAsync(id);
+        }
+
+        public async Task SendTwitchAnnoucement(long id, string message)
+        {
+            await m_apiClient.SendTwitchAnnouncementAsync(id, message, TwitchApi.Enums.AnnouncementColourScheme.Primary);
         }
     }
 }

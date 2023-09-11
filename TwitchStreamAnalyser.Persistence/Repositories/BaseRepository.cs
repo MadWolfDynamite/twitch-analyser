@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 using TwitchStreamAnalyser.TwitchApi;
+using TwitchStreamAnalyser.TwitchApi.Contracts;
 
 namespace TwitchStreamAnalyser.Persistence.Repositories
 {
     public abstract class BaseRepository
     {
-        protected readonly TwitchApiClient _apiClient;
-        protected readonly TwitchTokenClient _tokenClient;
+        protected readonly ITwitchApiClient m_apiClient;
+        protected readonly ITwitchTokenClient m_tokenClient;
 
-        public BaseRepository()
+        public BaseRepository(ITwitchApiClient apiClient, ITwitchTokenClient tokenClient)
         {
-            _apiClient = TwitchApiClient.GetClient();
-            _tokenClient = TwitchTokenClient.GetClient();
+            m_apiClient = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
+            m_tokenClient = tokenClient ?? throw new ArgumentNullException(nameof(tokenClient));
         }
     }
 }

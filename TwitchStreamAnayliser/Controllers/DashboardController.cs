@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
-using TwitchStreamAnalyser.Models;
-using TwitchStreamAnalyser.FileProcessing;
-using TwitchStreamAnalyser.Client.Services;
 using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using TwitchStreamAnalyser.Client.Services;
+using TwitchStreamAnalyser.FileProcessing;
+using TwitchStreamAnalyser.Models;
 
 namespace TwitchStreamAnalyser.Controllers
 {

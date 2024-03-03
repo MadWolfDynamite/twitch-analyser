@@ -1,15 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Tools.StreamSerializer;
+using TwitchStreamAnalyser.Domain.Comparers;
 using TwitchStreamAnalyser.Domain.Models;
 using TwitchStreamAnalyser.TwitchApi.Contracts;
 using TwitchStreamAnalyser.TwitchApi.Enums;
@@ -58,7 +57,7 @@ namespace TwitchStreamAnalyser.TwitchApi
 
              Stream stream;
              var channelData = new TwitchResponse<TwitchChannel>();
-             var isSuccessfulResponse = false;
+             var isSuccessfulResponse = false; 
 
              do
              {
@@ -72,7 +71,7 @@ namespace TwitchStreamAnalyser.TwitchApi
 
                  isSuccessfulResponse = response.IsSuccessStatusCode;
 
-                 if (response.IsSuccessStatusCode)
+                 if (isSuccessfulResponse)
                  {
                      channelData = StreamSerializer.DeserialiseJsonFromStream<TwitchResponse<TwitchChannel>>(stream);
                      result.AddRange(channelData.Data);
@@ -88,7 +87,8 @@ namespace TwitchStreamAnalyser.TwitchApi
                  throw new Exception(content);
              }
 
-             return result;
+            var comparer = new KeyEqualityComparer<TwitchChannel, string>(x => x.Id);
+            return result.Distinct(comparer);
          }
 
          public async Task<IEnumerable<TwitchGame>> GetTwitchGameAsync(long gameId)
@@ -163,7 +163,7 @@ namespace TwitchStreamAnalyser.TwitchApi
                  throw new Exception(content);
              }
 
-             return result;
+            return result;
          }
 
         public async Task SendTwitchAnnouncementAsync(long userId, string message, AnnouncementColourScheme colourTheme)

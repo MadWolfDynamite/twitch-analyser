@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Tools.StreamSerializer;
 using TwitchStreamAnalyser.Domain.Models;
 using TwitchStreamAnalyser.TwitchApi.Contracts;
-using TwitchStreamAnalyser.TwitchApi.Models;
 
 namespace TwitchStreamAnalyser.TwitchApi
 {
